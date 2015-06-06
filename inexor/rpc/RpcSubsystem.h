@@ -3,6 +3,9 @@
 
 // Convenience Header
 
+#include <memory>
+#include <boost/make_unique.hpp>
+
 #include "inexor/net/MCServer.h"
 
 #include "inexor/rpc/inexor_service.pb.h"
@@ -14,21 +17,20 @@
 namespace inexor {
 namespace rpc {
 
-
 class RpcSubsystem : public inexor::util::Subsystem {
 public:
 
     /// The connection we maintain
-    inexor::net::MCServer *socket = NULL;
+    std::uniq_ptr<inexor::net::MCServer> socket(NULL);
     /// RPC Call Negotiation
-    MCRpcServer *server = NULL;
+    std::uniq_ptr<MCRpcServer> server(NULL);
     /// RPC Function Implementation
-    InexorService *rpc_service = new InexorServiceImpl();
+    std::uniq_ptr<InexorService> rpc_service =
+        boost::make_unique<InexorServiceImpl>();
 
     RpcSubsystem();
-    virtual ~RpcSubsystem();
 
-    virtual void tick();
+    void tick();
 };
 
 

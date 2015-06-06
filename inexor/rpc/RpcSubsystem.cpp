@@ -20,7 +20,7 @@ RpcSubsystem::RpcSubsystem() {
     cerr << "[INFO] Listening for IPC connections on: "
       << path << endl;
 
-    socket = new MCUnixServer(path);
+    socket = boost::make_unique<MCUnixServer>(path);
 
     // TODO: Windows needs a fast (more secure) IPC transport
 #else
@@ -29,16 +29,11 @@ RpcSubsystem::RpcSubsystem() {
           << port << endl;
 
     // TODO: This should not require ipv4
-    socket = new MCTcpServer(v4(), port);
+    socket = boost::make_unique<MCTcpServer>(v4(), port);
 #endif
 
-    server = new MCRpcServer(rpc_service, &socket->broadcast());
-}
-
-RpcSubsystem::~RpcSubsystem() {
-    delete server;
-    delete rpc_service;
-    delete socket;
+    server = boost::make_unique(
+        rpc_service.get(), &socket->broadcast());
 }
 
 void RpcSubsystem::tick() {
