@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#include <boost/signals2.hpp>
+
 #include "inexor/util/Event.h"
 
 namespace inexor {
@@ -60,13 +62,15 @@ private:
 
     T value;
 public:
+    using boost::signals2::signal;
+
     /// Event that is fired when a new value is assigned;
     ///
     /// This does however not fire, when the value is merely
     /// modified
     ///
     /// params: old value, new value
-    Event<const T&, const T&> onChange;
+    signal<void(const T&, const T&)> onChange;
 
     // Access
 
