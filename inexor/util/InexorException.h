@@ -32,37 +32,29 @@ namespace util {
 ///       operator
 class InexorException : public std::exception {
 public:
-    const char *_what;
+    std::string what = "Some problem occurred in the inexor code. Dunno what.";
 
     /// Default constructor
     ///
     /// Initializes what() with a generic message.
-    InexorException() INEXOR_NOEXCEPT {
-        _what = "Some problem occurred in the inexor code. Dunno what.";
-    }
+    InexorException() INEXOR_NOEXCEPT {}
 
     /// Initialize this exception with a custom error
     /// message
     /// @param s The error message
-    InexorException(const char *s) INEXOR_NOEXCEPT {
-        _what = s;
-    }
+    InexorException(const char *s) : what(s) {}
 
     /// Initialize this exception with a custom error
     /// message
     ///
     /// @param s The error message
-    InexorException(std::string &s) INEXOR_NOEXCEPT {
-        _what = s.c_str();
-    }
+    InexorException(std::string s) : what(s) {}
 
     /// Initialize this exception with a custom error
     /// message in a string
     /// @param s The error message
-    InexorException(const InexorException &e) 
-          INEXOR_NOEXCEPT : std::exception(e) {
-        _what = e._what;
-    }
+    InexorException(const InexorException &e)
+        : std::exception(e), what(e.what){}
 
     /// The name of this exception class.
     virtual const char* clazz() {
@@ -70,14 +62,14 @@ public:
     }
 
     /// Generates an error message appropriate for logging
-    virtual const char* message() {
+    virtual std::string message() {
         std::string s =
           inexor::util::fmt << clazz() << ": " << what();
         return s.c_str();
     }
 
     virtual const char* what() const INEXOR_NOEXCEPT {
-        return _what;
+        return what.c_str();
     }
 };
 
@@ -97,10 +89,7 @@ public:
 #define EXCEPTION(name, base, __what   )                    \
     class name : public base {                              \
     public:                                                 \
-        name () INEXOR_NOEXCEPT : base ( __what ) {}        \
-        name (const char *s) INEXOR_NOEXCEPT : base (s) {}  \
-        name (std::string &s) INEXOR_NOEXCEPT : base (s) {} \
-        name (const name &e) INEXOR_NOEXCEPT : base (e) {}  \
+        using base::base;                                   \
         virtual const char* clazz() INEXOR_NOEXCEPT {       \
             return #name ;                                  \
         }                                                   \
