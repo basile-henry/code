@@ -21,6 +21,9 @@ extern "C" {
 #include <iostream>
 #include "inexor/rpc/InexorServiceImpl.h"
 
+#include "inexor/rpc/SharedVar.h"
+#include "inexor/rpc/SharedVar_declarations.h"
+
 // Legacy
 #include "inexor/shared/cube.h"
 
@@ -53,6 +56,78 @@ namespace rpc {
     if (done)
       done->Run();
   }
+
+void InexorServiceImpl::VarSet(RpcController* ctrl,
+  const VarSetP* req, VarSetR* res, Closure* done) {
+    const varMap &values = req.values()
+    const Reflection ref = values.GetReflection();
+    // TODO: This seems pretty inefficient; we need a very
+    // simple iterator only!
+    vector<const FieldDescriptor*> fields;
+    ref->ListFields(values, &fields);
+
+    for (auto field : fields) {
+        auto id = field->getIndex();
+        switch (id) {
+
+#define SV(pid, ptype, pname, cpptype, cppname, include, deprecated) \
+          case pid :                                       \
+            if (deprecated)                                \
+                res.problems().add_deprecated(id);         \
+            else if (!include)                             \
+                res.problems().add_unused(id);             \
+            else                                           \
+                cppname = values.pname();                  \
+            break;
+#include "inexor/rpc/vars.pp"
+#undef SV
+
+          default:
+            res.problems().add_unsupported(id);
+            break;
+        }
+    }
+
+    if (done) done->Run();
+}
+
+void InexorServiceImpl::VarGet(RpcController* ctrl,
+  const VarGetP* req, VarGetR* res, Closure* done) {
+    varList &vars = req.variables();
+    varMap  &values = res.values();
+    for (auto i=0; i< vars.id_size(); i++) {
+        auto id = vars.id(i);
+        switch (id) {
+
+#define SV(pid, ptype, pname, cpptype, cppname, include, deprecated) \
+          case pid :                                       \
+            if (deprecated)                                \
+                res.problems().add_deprecated(id);         \
+            else if (!include)                             \
+                res.problems().add_unused(id);             \
+            else                                           \
+                values.set_ ## pname (cppname);            \
+            break;
+#include "inexor/rpc/vars.pp"
+#undef SV
+
+          default:
+            res.problems().add_unsupported(id);
+            break;
+        }
+    }
+    if (done) done->Run();
+}
+
+void InexorServiceImpl::VarSubscribe(RpcController* ctrl,
+    const VarSubscribeP* req, VarSubscribeR* res,
+    Closure* done);
+void InexorServiceImpl::VarUnsubscribe(RpcController* ctrl,
+    const VarUnsubscribeP* req, VarUnsubscribeR* res,
+    Closure* done);
+void InexorServiceImpl::VarGetSubscriptions(RpcController* ctrl,
+    const VarGetSubscriptionsP* req,
+    VarGetSubscriptionsR* res, Closure* done);
 
 }
 }

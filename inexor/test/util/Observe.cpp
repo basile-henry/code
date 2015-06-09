@@ -69,7 +69,7 @@ void __test_primitive(T seed, T overw) {
     {                                                      \
         called = false;                                    \
         Observe<T> X(seed);                                \
-        X.onChange.listen(listener);                       \
+        X.onChange.connect(listener);                      \
         desc = description;                                \
         exold = seed;                                      \
         exnew = (_new);                                    \

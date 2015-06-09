@@ -1,0 +1,20 @@
+// Used by our RPC Server/Client implementation
+//
+// Encodes a method call or a method return callback
+message ServiceCall {
+  enum CallType {
+    CALL = 0;
+    RESPONSE = 1;
+  }
+
+  // The canonical name of the function to call
+  required string function_name = 2;
+  // UUID; same for call and callback
+  required string call_uuid = 3;
+
+  // Indicates whether this is a call or a call back
+  required CallType type = 6;
+
+  // The serialized message this carries
+  required bytes payload = 8;
+}

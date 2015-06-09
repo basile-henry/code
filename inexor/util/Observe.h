@@ -5,8 +5,6 @@
 
 #include <boost/signals2.hpp>
 
-#include "inexor/util/Event.h"
-
 namespace inexor {
 namespace util {
 
@@ -57,12 +55,10 @@ namespace util {
 /// ```
 template<typename T>
 class Observe {
-private:
     typedef Observe<T> TMe;
 
     T value;
 public:
-    using boost::signals2::signal;
 
     /// Event that is fired when a new value is assigned;
     ///
@@ -70,7 +66,7 @@ public:
     /// modified
     ///
     /// params: old value, new value
-    signal<void(const T&, const T&)> onChange;
+    boost::signals2::signal<void(const T&, const T&)> onChange;
 
     // Access
 

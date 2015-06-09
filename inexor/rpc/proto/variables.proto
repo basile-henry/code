@@ -1,0 +1,66 @@
+// The varMap message type
+import "inexor/rpc/proto/variables_map.proto";
+
+/// A list of variables;
+/// Refer to vars.pp which variable belongs to each index
+message varList {
+  repeated uint64 id = 1 [packed=true];
+}
+
+/// Indicates problems with variables
+message varProblems {
+  // Refers to variables that are generally supported, but
+  // not in this build (some variables are not available in the server)
+  optional varList unsupported = 1;
+  // Refers to variables that are no longer supported in 
+  // this inexor version
+  optional varList deprecated = 2;
+  // Refers to variables that are not known to this version
+  // of inexor
+  optional varList non_existant = 3;
+}
+
+message VarSetP { required varMap values = 1; }
+message VarSetR { optional varProblems problems = 1; }
+
+message VarGetP { required varList variables = 1; }
+message VarGetR { 
+  required varMap values = 1;
+  optional varProblems problems = 2;
+}
+
+// This is
+message varChangeNotification {
+  required varMap new = 1;
+  optional varMap old = 2;
+}
+
+message VarSubscribeP { required varList variables = 1; }
+message VarSubscribeR {
+  optional varProblems problems = 1;
+  optional varList already_subscribed = 2;
+}
+
+message VarUnsubscribeP { required varList variables = 1; }
+message VarUnsubscribeR {
+  optional varProblems problems = 1;
+  optional varList not_subscribed = 2;
+}
+
+message VarGetSubscriptionsP {};
+message VarGetSubscriptionsR { required varList variables = 1; };
+
+
+service InexorService {
+  // Call some cubescript on the server
+  rpc EvalCubescript (Cubescript) returns (CubescriptResult);
+
+  //// VARIABLE ACCESS /////////////////////////////////////
+
+  rpc VarSet (VarSetP) returns (VarSetR);
+  rpc VarGet (VarGetP) returns (VarGetR);
+
+  rpc VarSubscribe (VarSubscribeP) returns (VarSubscribeR);
+  rpc VarUnsubscribe (VarUnsubscribeP) returns (VarUnsubscribeR);
+  rpc VarGetSubscriptions (VarGetSubscriptionsP) returns (VarGetSubscriptionsR);
+}

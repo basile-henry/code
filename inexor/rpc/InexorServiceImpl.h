@@ -15,13 +15,27 @@ namespace rpc {
   class InexorServiceImpl : public InexorService_Stub {
     typedef google::protobuf::RpcController RpcController;
     typedef google::protobuf::Closure Closure;
-
   public:
     InexorServiceImpl() : InexorService_Stub(NULL) {}
 
     void EvalCubescript(RpcController* ctrl,
         const Cubescript* req, CubescriptResult* res,
         Closure* done);
+
+    void VarSet(RpcController* ctrl, const VarSetP* req,
+        VarSetR* res, Closure* done);
+    void VarGet(RpcController* ctrl, const VarGetP* req,
+        VarGetR* res, Closure* done);
+
+    void VarSubscribe(RpcController* ctrl,
+        const VarSubscribeP* req, VarSubscribeR* res,
+        Closure* done);
+    void VarUnsubscribe(RpcController* ctrl,
+        const VarUnsubscribeP* req, VarUnsubscribeR* res,
+        Closure* done);
+    void VarGetSubscriptions(RpcController* ctrl,
+        const VarGetSubscriptionsP* req,
+        VarGetSubscriptionsR* res, Closure* done);
   };
 
 }

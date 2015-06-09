@@ -1,0 +1,20 @@
+package inexor.rpc;
+
+// The result of cubescript code, encoding the cubescript
+// return value
+message CubescriptResult {
+  optional string s = 4; // string
+  optional int64  i = 5; // integer
+  optional double f = 6;
+  optional bool   null = 7;
+}
+
+// For sending cubescript code, just a string
+message Cubescript {
+  required string code = 1;
+}
+
+service InexorService {
+  // Call some cubescript on the server
+  rpc EvalCubescript (Cubescript) returns (CubescriptResult);
+}

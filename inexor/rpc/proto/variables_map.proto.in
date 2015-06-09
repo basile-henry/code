@@ -1,0 +1,10 @@
+message varMap {
+
+#define SV(proto_id, proto_type, proto_name,           \
+           cpp_type, cpp_name, include, deprecated)    \
+    optional proto_type proto_name = proto_id
+
+#include inexor/rpc/vars.pp
+#undef SV
+
+}

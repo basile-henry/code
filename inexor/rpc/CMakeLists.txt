@@ -9,9 +9,21 @@ if (NOT DEFINED PROTOC_EXE)
   find_program(PROTOC_EXE protoc)
 endif()
 
-# RPC PROTOCOL FILE TARGET
+# GENERATE VARIABLES MAP
 
 set(RPC_FILE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "")
+
+set(varmap_out_dir "${CMAKE_BINARY_DIR}/inexor/rpc/proto/")
+set(varmap_in  "${RPC_FILE_DIR}/proto/variables_map.proto.pp")
+set(varmap_out_dir "${varmap_out_dir}/variables_map.proto")
+add_custom_command(
+  OUTPUT "${varmap_out}"
+  COMMAND ${CMAKE_CXX_COMPILER} -E -I${MAINDIR}
+      ${varmap_in} -o ${varmap_out}
+  DEPENDS ${varmap_in})
+set_source_files_properties(${varmap_out} PROPERTIES GENERATED TRUE)
+
+# RPC PROTOCOL FILE TARGET
 
 set(protoc_in ${RPC_FILE_DIR}/inexor_service.proto)
 set(protoc_out_dir "${CMAKE_BINARY_DIR}/inexor/rpc/inexor/rpc/")
@@ -25,7 +37,7 @@ add_custom_command(
   COMMAND ${PROTOC_EXE}
       --proto_path=${MAINDIR}
       --cpp_out=${CMAKE_BINARY_DIR}/inexor/rpc/ ${protoc_in}
-  DEPENDS ${protoc_in})
+  DEPENDS ${protoc_in} ${varmap_out})
 set_source_files_properties(${protoc_out} PROPERTIES GENERATED TRUE)
 add_custom_target(run_protoc DEPENDS ${protoc_out})
 
