@@ -22,14 +22,12 @@ RpcSubsystem::RpcSubsystem() {
 
     socket = inexor::compat::make_unique<MCUnixServer>(path);
 
-    // TODO: Windows needs a fast (more secure) IPC transport
 #else
-    unsigned short port = 56732;
-    cerr << "[INFO] Listening for IPC connections on port "
-          << port << endl;
+    string path = "\\\\.\\pipe\\inexor.socket";
+    cerr << "[INFO] Listening for IPC connections on"
+          << path << endl;
 
-    // TODO: This should not require ipv4
-    socket = inexor::compat::make_unique<MCTcpServer>(v4(), port);
+    socket = inexor::compat::make_unique<windowspipe>(path);
 #endif
 
     server = inexor::compat::make_unique<MCRpcServer>(

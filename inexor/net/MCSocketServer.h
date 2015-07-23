@@ -18,7 +18,87 @@
 
 namespace inexor {
 namespace net {
-  
+
+#ifdef WIN32
+    #define PIPE_BUF_SIZE 50000
+    class windowspipe : public MCServer 
+    {
+        typedef asio::io_service service;
+
+        bool initilized = false;
+        bool own_serv = false;
+
+        service *serv;
+        asio::windows::stream_handle handle;
+
+        HANDLE pipe = INVALID_HANDLE_VALUE;
+        OVERLAPPED overlapped;
+
+      public:
+        /// Default constructor with special service.
+        //windowspipe(service &srv_) : serv(&srv_), handle(*serv) {}
+
+        /// Default constructor with fresh ASIO io service
+        windowspipe(std::string name) : own_serv(true), serv(new service), handle(*serv)
+        {
+            pipe = CreateNamedPipe(name.c_str(), 
+                PIPE_ACCESS_DUPLEX
+                | FILE_FLAG_FIRST_PIPE_INSTANCE
+                | FILE_FLAG_OVERLAPPED,
+                PIPE_TYPE_BYTE
+                | PIPE_READMODE_BYTE
+                | PIPE_NOWAIT, // non blocking mode -> what else needed?
+                20, PIPE_BUF_SIZE, PIPE_BUF_SIZE, 0, 0);
+
+            if(pipe != INVALID_HANDLE_VALUE)
+            {
+                handle.assign(pipe);
+                overlapped = { 0 };
+                initilized = true;
+            }
+        }
+
+        ~windowspipe()
+        {
+            DisconnectNamedPipe(pipe);
+        }
+
+        virtual std::unique_ptr<MessageConnect> getNextStream()
+        {
+            overlapped.hEvent = CreateEvent(0, true, false, 0);
+            if(!ConnectNamedPipe(pipe, &overlapped))
+            {
+                unsigned error = GetLastError();
+                if(error != ERROR_PIPE_CONNECTED && error != ERROR_IO_PENDING)
+                {
+                    DisconnectNamedPipe(pipe);
+                    return NULL;
+                }
+            }
+            WaitForSingleObject(overlapped.hEvent, INFINITE);
+            CloseHandle(overlapped.hEvent);
+            return NULL; //todoo
+        }
+
+        virtual size_t read(byte *buf, size_t max)
+        {
+            asio::error_code er;
+            //size_t n = std::min(s.available(), max); if(n>0)
+            handle.read_some(asio::buffer(buf, max), er);
+            if(er) throw asio::system_error(er, "Can not read from pipe");
+            return max; //sizeof buffer?
+        }
+
+        virtual void write(byte *buf, size_t len)
+        {
+            asio::error_code er;
+            handle.write_some(asio::buffer(buf, len), er); //async_write some instead??
+            if(er) throw asio::system_error(er, "Can not write into pipe");
+            FlushFileBuffers(pipe); //careful: this blocks! but for how long?
+        }
+    };
+#endif // WIN32
+
   /**
    * Generic implementation for an ASIO based MCServer.
    *
@@ -39,7 +119,6 @@ namespace net {
     endpoint end;
     acceptor ack;
 
-  protected:
     virtual std::unique_ptr<MessageConnect> getNextStream() {
       asio::error_code er;
       std::unique_ptr<mcsoc> s =
