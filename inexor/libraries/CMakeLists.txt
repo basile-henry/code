@@ -174,7 +174,7 @@ endif()
 
 if(NOT ENET_SYSTEM AND (NOT ENET_LIBS OR NOT ENET_INCLUDE_DIRS))
     message(STATUS "Building local ENet")
-    add_subdirectory(libraries/enet)
+    add_subdirectory(enet)
 endif()
 
 function(config_enet targ)
