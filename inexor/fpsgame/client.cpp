@@ -1452,6 +1452,10 @@ namespace game
             d->flags = getint(p);
             if(d==player1) getint(p);
             else d->quadmillis = getint(p);
+            d->deaths = getint(p);
+            d->teamkills = getint(p);
+            d->totaldamage = getint(p);
+            d->totalshots = getint(p);
         }
         d->lifesequence = getint(p);
         d->health = getint(p);
