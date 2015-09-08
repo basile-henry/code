@@ -2,13 +2,11 @@ version: 0.{build}
 clone_depth: 1
 clone_folder: C:\projects\inexor-game
 
-platform: 
-  - Win32
+platform:
   - x64
 
 # build Configuration, i.e. Debug, Release, etc.
 configuration:
-  - Debug
   - Release
 
 # scripts that are called at very beginning, before repo cloning
