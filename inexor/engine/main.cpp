@@ -92,7 +92,7 @@ void fatal(const char *s, ...)
     errors++;
     if(errors <= 2) /// print up to one extra recursive error
     {
-        defvformatstring(msg,s,s);
+        defvnformatstring(msg, 500, s,s);
         logoutf("%s", msg);
 
         if(errors <= 1) /// avoid recursion

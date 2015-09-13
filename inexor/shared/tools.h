@@ -200,6 +200,7 @@ template<size_t N> inline void concformatstring(char (&d)[N], const char *fmt, .
 }
 
 #define defformatstring(d,...) string d; formatstring(d, __VA_ARGS__)
+#define defvnformatstring(d,len, last,fmt) char d[len]; { va_list ap; va_start(ap, last); vformatstring(d, fmt, ap); va_end(ap); }
 #define defvformatstring(d,last,fmt) string d; { va_list ap; va_start(ap, last); vformatstring(d, fmt, ap); va_end(ap); }
 
 /// formatstring using some static globals, faster but less safe.
