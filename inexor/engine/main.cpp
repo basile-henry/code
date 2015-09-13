@@ -1199,6 +1199,13 @@ ICOMMAND(cef_reload, "", (),
 ICOMMAND(cef_focus, "b", (bool *b),
     if (cef_app.get()) cef_app->setFocus(*b); );
 
+#include <csignal>
+void killprogram(int which)
+{
+    raise(SIGSEGV);
+}
+COMMAND(killprogram, "i");
+
 /// main program start
 int main(int argc, char **argv)
 {
