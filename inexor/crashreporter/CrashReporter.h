@@ -10,18 +10,21 @@
 
 namespace inexor {
 namespace crashreporter {
-
+#ifndef __MINGW32__
     extern void abortHandler(int signum);
+#endif
 
     class CrashReporter
     {
       public:
         CrashReporter()
         {
+#ifndef __MINGW32__
             signal(SIGABRT, abortHandler);
             signal(SIGSEGV, abortHandler);
             signal(SIGILL, abortHandler);
             signal(SIGFPE, abortHandler);
+#endif
         }
     };
 
