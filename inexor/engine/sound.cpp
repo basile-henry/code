@@ -401,18 +401,36 @@ void initsound()
     nosound = false;
 }
 
+
+/// This is a callback function!
+/// As soon as music has stopped palying, call this function
 void musicdone()
 {
-    if(music) { Mix_HaltMusic(); Mix_FreeMusic(music); music = NULL; }
-    if(musicrw) { SDL_FreeRW(musicrw); musicrw = NULL; }
+    if(music) 
+    {
+        /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_67.html
+        Mix_HaltMusic(); 
+        /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_56.html
+        Mix_FreeMusic(music);
+        music = NULL;
+    }
+    if(musicrw)
+    {
+        /// https://wiki.libsdl.org/SDL_FreeRW
+        SDL_FreeRW(musicrw);
+        musicrw = NULL;
+    }
     DELETEP(musicstream);
     DELETEA(musicfile);
     if(!musicdonecmd) return;
     char *cmd = musicdonecmd;
     musicdonecmd = NULL;
+
+    /// execute CubeScript "music has stopped playing" comamnd
     execute(cmd);
     delete[] cmd;
 }
+
 
 Mix_Music *loadmusic(const char *name)
 {
