@@ -417,10 +417,10 @@ namespace game
 
     void preloadsounds()
     {
-        for(int i = S_JUMP; i <= S_SPLASH2; i++) preloadsound(i);
-        for(int i = S_JUMPPAD; i <= S_PISTOL; i++) preloadsound(i);
-        for(int i = S_V_BOOST; i <= S_V_QUAD10; i++) preloadsound(i);
-        for(int i = S_BURN; i <= S_HIT; i++) preloadsound(i);
+        //for(int i = S_JUMP; i <= S_SPLASH2; i++) preloadsound(i);
+        //for(int i = S_JUMPPAD; i <= S_PISTOL; i++) preloadsound(i);
+        //for(int i = S_V_BOOST; i <= S_V_QUAD10; i++) preloadsound(i);
+        //for(int i = S_BURN; i <= S_HIT; i++) preloadsound(i);
     }
 
     void preload()
