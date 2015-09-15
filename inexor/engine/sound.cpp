@@ -6,29 +6,60 @@
 #include "SDL_mixer.h"
 #define MAXVOL MIX_MAX_VOLUME
 
+/// determins if sound is on or off (/soundvol 0?)
 bool nosound = true;
 
+
+/// structure to describe a sound sample
 struct soundsample
 {
+    /// the name of the sound sample
     char *name;
+    /// SDL documentation:
+    /// The internal format for an audio chunk. This stores the sample data, the length in bytes of that data, and the volume to use when mixing the sample. 
     Mix_Chunk *chunk;
 
+    /// sound sample constructor
     soundsample() : name(NULL), chunk(NULL) {}
+    /// sound sample destructor
+    /// only deletes sound sample name (whose memory is being allocated dynamically)
     ~soundsample() { DELETEA(name); }
 
-    void cleanup() { if(chunk) { Mix_FreeChunk(chunk); chunk = NULL; } }
+    /// cleans a chunk
+    /// this function body has been reformatted!
+    void cleanup() 
+    {
+        if(chunk)
+        {
+            /// SDL documentation:
+            /// Free the memory used in chunk, and free chunk itself as well. 
+            /// Do not use chunk after this without loading a new sample to it. 
+            /// Note: It's a bad idea to free a chunk that is still being played... 
+            Mix_FreeChunk(chunk);
+            chunk = NULL;
+        }
+    }
+
+    /// ?
     bool load(bool msg = false);
 };
 
+
+/// A structure to describe a sound slot
 struct soundslot
 {
+    /// A pointer to an instance of the sound sample structure
     soundsample *sample;
+    /// the play volume of this slot
     int volume;
 };
 
+/// A structure to describe the configuration of the sound interface
 struct soundconfig
 {
+    /// ?
     int slots, numslots;
+    /// number of ?
     int maxuses;
 
     bool hasslot(const soundslot *p, const vector<soundslot> &v) const
@@ -42,21 +73,59 @@ struct soundconfig
     }
 };
 
+
+/// A structure to describe a sound channel
 struct soundchannel
 { 
+    /// the unique identifier of this sound channel
     int id;
+    /// describes if this sound channel is currently in use
     bool inuse;
-    vec loc; 
+    /// the 3D position of this sound channel
+    vec loc;
+    /// 
     soundslot *slot;
-    extentity *ent; 
-    int radius, volume, pan, flags;
+    /// the entity to which this sound channel is linked
+    extentity *ent;
+
+    /// these initialisations have been rewritten so every int is in an own line
+    /// the radius of the sound channel
+    int radius;
+    /// the volume of the sound channel
+    int volume;
+    /// ?
+    int pan;
+    /// options seems to be stored in binary flags
+    /// see binary operators &~
+    int flags;
+    /// ?
     bool dirty;
 
-    soundchannel(int id) : id(id) { reset(); }
+    /// constructor
+    /// this function body has been reformatted
+    /// initialise the sound channel's id via a constructor list
+    /// TODO: why use a constructor list if id is not const?
+    soundchannel(int id) : id(id)
+    {
+        /// reset the sound channel
+        reset();
+    }
 
-    bool hasloc() const { return loc.x >= -1e15f; }
-    void clearloc() { loc = vec(-1e16f, -1e16f, -1e16f); }
+    /// this function body has been reformatted
+    /// TODO: ? check if this sound channel has a location?
+    bool hasloc() const 
+    {
+        return loc.x >= -1e15f;
+    }
 
+    /// clear sound channel's location
+    /// TODO: Why not use vec(0,0,0) ??
+    void clearloc() 
+    {
+        loc = vec(-1e16f, -1e16f, -1e16f);
+    }
+
+    /// reset the sound channel
     void reset()
     {
         inuse = false;
@@ -64,15 +133,21 @@ struct soundchannel
         slot = NULL;
         ent = NULL;
         radius = 0;
+        /// TODO: why set volume to -1 instead of just 0?
         volume = -1;
         pan = -1;
         flags = 0;
         dirty = false;
     }
 };
+
+/// A (Sauerbraten) vector which contains the sound channels
 vector<soundchannel> channels;
+
+/// the maximum number of channels (that should be used?)
 int maxchannels = 0;
 
+/// create a new sound channel
 soundchannel &newchannel(int n, soundslot *slot, const vec *loc = NULL, extentity *ent = NULL, int flags = 0, int radius = 0)
 {
     if(ent)
