@@ -556,7 +556,8 @@ extern SharedVar<int> mainmenu;
 extern void clearmainmenu();
 extern void g3d_mainmenu();
 
-// sound
+// sound 
+/*
 extern void clearmapsounds();
 extern void checkmapsounds();
 extern void updatesounds();
@@ -565,7 +566,7 @@ extern void preloadmapsounds();
 extern void initmumble();
 extern void closemumble();
 extern void updatemumble();
-
+*/
 // grass
 extern void generategrass();
 extern void rendergrass();
