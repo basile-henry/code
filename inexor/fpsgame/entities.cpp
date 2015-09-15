@@ -117,14 +117,14 @@ namespace entities
         loopv(ents)
         {
             extentity &e = *ents[i];
-            switch(e.type)
+            /*switch(e.type)
             {
                 case TELEPORT:
                     if(e.attr2 > 0) preloadmodel(mapmodelname(e.attr2));
                 case JUMPPAD:
                     if(e.attr4 > 0) preloadmapsound(e.attr4);
                     break;
-            }
+            }*/
         }
     }
 
@@ -186,28 +186,28 @@ namespace entities
             // TODO: bomb items switch
             particle_icon(d->abovehead(), is.icon%4, is.icon/4, PART_HUD_ICON_GREY, 2000, 0xFFFFFF, 2.0f, -8);
         }
-        playsound(itemstats[type-I_SHELLS].sound, d!=player1 ? &d->o : NULL, NULL, 0, 0, 0, -1, 0, 1500);
+        //playsound(itemstats[type-I_SHELLS].sound, d!=player1 ? &d->o : NULL, NULL, 0, 0, 0, -1, 0, 1500);
         d->pickup(type);
         if(d==player1) switch(type)
         {
             case I_BOOST:
                 conoutf(CON_GAMEINFO, "\f2you have a permanent +10 health bonus! (%d)", d->maxhealth);
-                playsound(S_V_BOOST, NULL, NULL, 0, 0, 0, -1, 0, 3000);
+                //playsound(S_V_BOOST, NULL, NULL, 0, 0, 0, -1, 0, 3000);
                 break;
 
             case I_QUAD:
                 conoutf(CON_GAMEINFO, "\f2you got the quad!");
-                playsound(S_V_QUAD, NULL, NULL, 0, 0, 0, -1, 0, 3000);
+                //playsound(S_V_QUAD, NULL, NULL, 0, 0, 0, -1, 0, 3000);
                 break;
 
             case I_BOMBRADIUS:
                 conoutf(CON_GAMEINFO, "\f2you have a permanent +1 damage radius bonus!");
-                playsound(S_V_QUAD, NULL, NULL, 0, 0, -1, 0, 3000); // TODO: other sound
+                //playsound(S_V_QUAD, NULL, NULL, 0, 0, -1, 0, 3000); // TODO: other sound
                 break;
 
             case I_BOMBDELAY:
                 conoutf(CON_GAMEINFO, "\f2your bombs explode faster!");
-                playsound(S_ITEMHEALTH, NULL, NULL, 0, 0, -1, 0, 3000);
+                //playsound(S_ITEMHEALTH, NULL, NULL, 0, 0, -1, 0, 3000);
                 break;
         }
     }
@@ -222,13 +222,13 @@ namespace entities
             if(e.attr4 >= 0) 
             {
                 int snd = S_TELEPORT, flags = 0;
-                if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
-                if(d == player1) playsound(snd, NULL, NULL, flags); 
+                //if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
+                /*if(d == player1) playsound(snd, NULL, NULL, flags); 
                 else
                 {
                     playsound(snd, &e.o, NULL, flags);
                     if(ents.inrange(td) && ents[td]->type == TELEDEST) playsound(snd, &ents[td]->o, NULL, flags);
-                }
+                }*/
             }
         }
         if(local && d->clientnum >= 0)
@@ -252,9 +252,9 @@ namespace entities
             if(e.attr4 >= 0)
             {
                 int snd = S_JUMPPAD, flags = 0;
-                if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
-                if(d == player1) playsound(snd, NULL, NULL, flags);
-                else playsound(snd, &e.o, NULL, flags);
+                //if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
+                /*if(d == player1) playsound(snd, NULL, NULL, flags);
+                else playsound(snd, &e.o, NULL, flags);*/
             }
         }
         if(local && d->clientnum >= 0)
@@ -330,7 +330,7 @@ namespace entities
                 if(n==respawnent) break;
                 respawnent = n;
                 conoutf(CON_GAMEINFO, "\f2respawn point set!");
-                playsound(S_V_RESPAWNPOINT);
+                //playsound(S_V_RESPAWNPOINT);
                 break;
 
             case JUMPPAD:
@@ -369,7 +369,7 @@ namespace entities
         if(d->quadmillis && (d->quadmillis -= time)<=0)
         {
             d->quadmillis = 0;
-            playsound(S_PUPOUT, d==player1 ? NULL : &d->o);
+            //playsound(S_PUPOUT, d==player1 ? NULL : &d->o);
             if(d==player1) conoutf(CON_GAMEINFO, "\f2quad damage is over");
         }
     }
@@ -517,7 +517,7 @@ namespace entities
                 if(newstate == TRIGGER_RESETTING && checktriggertype(e.attr3, TRIG_COLLIDE) && overlapsdynent(e.o, 20)) continue;
                 e.triggerstate = newstate;
                 e.lasttrigger = lastmillis;
-                if(checktriggertype(e.attr3, TRIG_RUMBLE)) playsound(S_RUMBLE, &e.o);
+                //if(checktriggertype(e.attr3, TRIG_RUMBLE)) playsound(S_RUMBLE, &e.o);
             }
         }
     }
@@ -583,7 +583,7 @@ namespace entities
                     e.triggerstate = TRIGGERING;
                     e.lasttrigger = lastmillis;
                     setuptriggerflags(e);
-                    if(checktriggertype(e.attr3, TRIG_RUMBLE)) playsound(S_RUMBLE, &e.o);
+                    //if(checktriggertype(e.attr3, TRIG_RUMBLE)) playsound(S_RUMBLE, &e.o);
                     if(checktriggertype(e.attr3, TRIG_ENDSP)) endsp(false);
                     if(e.attr4) doleveltrigger(e.attr4, 1);
                     break;
@@ -606,7 +606,7 @@ namespace entities
                     e.triggerstate = TRIGGER_RESETTING;
                     e.lasttrigger = lastmillis;
                     setuptriggerflags(e);
-                    if(checktriggertype(e.attr3, TRIG_RUMBLE)) playsound(S_RUMBLE, &e.o);
+                    //if(checktriggertype(e.attr3, TRIG_RUMBLE)) playsound(S_RUMBLE, &e.o);
                     if(checktriggertype(e.attr3, TRIG_ENDSP)) endsp(false);
                     if(e.attr4) doleveltrigger(e.attr4, 0);
                     break;
