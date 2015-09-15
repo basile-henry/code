@@ -60,15 +60,21 @@ struct soundslot
 struct soundconfig
 {
     /// ?
-    int slots, numslots;
+    int slots;
+    /// ?
+    int numslots;
     /// number of ?
     int maxuses;
 
+    /// ?
+    /// @param p
+    /// @param v
     bool hasslot(const soundslot *p, const vector<soundslot> &v) const
     {
         return p >= v.getbuf() + slots && p < v.getbuf() + slots+numslots && slots+numslots < v.length(); 
     }
 
+    /// if there are many configs choose a random sound slot?
     int chooseslot() const
     {
         return numslots > 1 ? slots + rnd(numslots) : slots;
@@ -186,19 +192,54 @@ soundchannel &newchannel(int n, soundslot *slot, const vec *loc = NULL, extentit
     return chan;
 }
 
+
+/// de-initialise and remove a channel by index
+/// @param n the index of the sound channel
+/// TODO: So it just de-initialises a sound channel but what happens to its data? will it be cleared? I dont see it.
 void freechannel(int n)
 {
+    /// check if this channel is initialised
     if(!channels.inrange(n) || !channels[n].inuse) return;
+    /// create a reference to the sound channel
     soundchannel &chan = channels[n];
+    /// mark it as unused
     chan.inuse = false;
+    /// if there is an entity associated with this sound channel
+    /// remove the entity's sound flag
     if(chan.ent) chan.ent->flags &= ~EF_SOUND;
 }
 
+/// TODO: What does it mean when a channel is dirty?
+/// does it mean that it is not synchronised with something??
+
 void syncchannel(soundchannel &chan)
 {
+    /// TODO: do not sync channels if they're not dirty?
     if(!chan.dirty) return;
-    if(!Mix_FadingChannel(chan.id)) Mix_Volume(chan.id, chan.volume);
+
+    /// SDL documentation
+    /// Tells you if which channel is fading in, out, or not.
+    /// Does not tell you if the channel is playing anything, or paused, so you'd need to test that separately. 
+    /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_40.html
+    if(!Mix_FadingChannel(chan.id))
+    {
+        /// SDL documentation
+        /// Set the volume for any allocated channel. If channel is -1 then all channels at are set at once.
+        /// The volume is applied during the final mix, along with the sample volume.
+        /// So setting this volume to 64 will halve the output of all samples played on the specifie
+        /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_27.html
+        Mix_Volume(chan.id, chan.volume);
+    }
+
+    /// SDL documentation
+    /// This effect will only work on stereo audio. Meaning you called Mix_OpenAudio with 2 channels (MIX_DEFAULT_CHANNELS). 
+    /// The easiest way to do true panning is to call Mix_SetPanning(channel, left, 254 - left); 
+    /// so that the total volume is correct, if you consider 
+    /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_80.html
     Mix_SetPanning(chan.id, 255-chan.pan, chan.pan);
+
+    /// TODO: not so dirty anymore?
+    /// but how to determine if a sound channel is dirty?
     chan.dirty = false;
 }
 
