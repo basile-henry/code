@@ -361,16 +361,43 @@ VARF(soundfreq, 0, 44100, 44100, initwarning("sound configuration", INIT_RESET, 
 /// the sound buffer length
 VARF(soundbufferlen, 128, 1024, 4096, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
 
+
+/// initialise sound
 void initsound()
 {
+    /// SDL documentation
+    /// Initialize the mixer API.
+    /// This must be called before using other functions in this library.
+    /// SDL must be initialized with SDL_INIT_AUDIO before this call. frequency would be 44100 for 44.1KHz, which is CD audio rate. 
+    /// Most games use 22050, because 44100 requires too much CPU power on older computers. chunksize is the size of each mixed sample. 
+    /// The smaller this is the more your hooks will be called. If make this too small on a slow system, sound may skip. If made to large, sound effects will lag behind the action more. 
+    /// You want a happy medium for your target computer. You also may make this 4096, or larger, if you are just playing music.
+    /// MIX_CHANNELS(8) mixing channels will be allocated by default. You may call this function multiple times, however you will have to call Mix_CloseAudio just as many times for the device to actually close. 
+    /// The format will not changed on subsequent calls until fully closed. So you will have to close all the way before trying to open with different format parameters. 
+    /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_11.html
     if(Mix_OpenAudio(soundfreq, MIX_DEFAULT_FORMAT, 2, soundbufferlen)<0)
     {
+        /// now we have no sound :(
         nosound = true;
+        /// SDL documentation
+        /// Gets an SDL_Error. 
+        /// http://sdl.beuc.net/sdl.wiki/Mix_GetError
         conoutf(CON_ERROR, "sound init failed (SDL_mixer): %s", Mix_GetError());
         return;
     }
-	Mix_AllocateChannels(soundchans);	
+
+    /// SDL documentation
+    /// Set the number of channels being mixed. This can be called multiple times, even with sounds playing. 
+    /// If numchans is less than the current number of channels, then the higher channels will be stopped, freed, and therefore not mixed any longer. 
+    /// It's probably not a good idea to change the size 1000 times a second though.
+    /// If any channels are deallocated, any callback set by Mix_ChannelFinished will be called when each channel is halted to be freed. 
+    /// Note: passing in zero WILL free all mixing channels, however music will still play. 
+    /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_26.html
+	Mix_AllocateChannels(soundchans);
+    	
+    /// so maxsoundchannels is just linked to the Sauerbraten in-engine command var soundchans!
     maxchannels = soundchans;
+    /// now we have sound!
     nosound = false;
 }
 
