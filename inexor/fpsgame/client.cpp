@@ -1529,7 +1529,7 @@ namespace game
 
             case N_SOUND:
                 if(!d) return;
-                playsound(getint(p), &d->o);
+                //playsound(getint(p), &d->o);
                 break;
 
             case N_TEXT:
@@ -1795,7 +1795,7 @@ namespace game
                 if(!d) return;
                 int gun = getint(p);
                 d->gunselect = clamp(gun, int(GUN_FIST), int(GUN_BOMB));
-                playsound(S_WEAPLOAD, &d->o);
+                //playsound(S_WEAPLOAD, &d->o);
                 break;
             }
 
@@ -1824,7 +1824,7 @@ namespace game
                 if(!entities::ents.inrange(i)) break;
                 entities::setspawn(i, true);
                 ai::itemspawned(i);
-                playsound(S_ITEMSPAWN, &entities::ents[i]->o, NULL, 0, 0, 0, -1, 0, 1500);
+                //playsound(S_ITEMSPAWN, &entities::ents[i]->o, NULL, 0, 0, 0, -1, 0, 1500);
                 #if 0
                 const char *name = entities::itemname(i);
                 if(name) particle_text(entities::ents[i]->o, name, PART_TEXT, 2000, 0x32FF64, 4.0f, -8);
@@ -1848,7 +1848,7 @@ namespace game
                     attachentity(*e);
                     entities::setspawn(id, true);
                     ai::itemspawned(id);
-                    playsound(S_ITEMSPAWN, &entities::ents[id]->o, NULL, 0, 0, -1, 0, 1500);
+                    //playsound(S_ITEMSPAWN, &entities::ents[id]->o, NULL, 0, 0, -1, 0, 1500);
                     int icon = entities::itemicon(id);
                     if(icon >= 0) particle_icon(vec(0.0f, 0.0f, 4.0f).add(entities::ents[id]->o), icon%4, icon/4, PART_HUD_ICON, 2000, 0xFFFFFF, 2.0f, -8);
                 }
@@ -2140,8 +2140,8 @@ namespace game
             case N_ANNOUNCE:
             {
                 int t = getint(p);
-                if     (t==I_QUAD)  { playsound(S_V_QUAD10, NULL, NULL, 0, 0, 0, -1, 0, 3000);  conoutf(CON_GAMEINFO, "\f2quad damage will spawn in 10 seconds!"); }
-                else if(t==I_BOOST) { playsound(S_V_BOOST10, NULL, NULL, 0, 0, 0, -1, 0, 3000); conoutf(CON_GAMEINFO, "\f2+10 health will spawn in 10 seconds!"); }
+                //if     (t==I_QUAD)  { playsound(S_V_QUAD10, NULL, NULL, 0, 0, 0, -1, 0, 3000);  conoutf(CON_GAMEINFO, "\f2quad damage will spawn in 10 seconds!"); }
+                //else if(t==I_BOOST) { playsound(S_V_BOOST10, NULL, NULL, 0, 0, 0, -1, 0, 3000); conoutf(CON_GAMEINFO, "\f2+10 health will spawn in 10 seconds!"); }
                 break;
             }
 
