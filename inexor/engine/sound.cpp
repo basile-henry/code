@@ -212,6 +212,7 @@ void freechannel(int n)
 /// TODO: What does it mean when a channel is dirty?
 /// does it mean that it is not synchronised with something??
 
+/// TODO: synchronise a channel?
 void syncchannel(soundchannel &chan)
 {
     /// TODO: do not sync channels if they're not dirty?
@@ -231,6 +232,8 @@ void syncchannel(soundchannel &chan)
         Mix_Volume(chan.id, chan.volume);
     }
 
+    /// TODO: what is panning?
+
     /// SDL documentation
     /// This effect will only work on stereo audio. Meaning you called Mix_OpenAudio with 2 channels (MIX_DEFAULT_CHANNELS). 
     /// The easiest way to do true panning is to call Mix_SetPanning(channel, left, 254 - left); 
@@ -243,50 +246,119 @@ void syncchannel(soundchannel &chan)
     chan.dirty = false;
 }
 
+/// stop all channels from playing
 void stopchannels()
 {
+    /// loop through the vector of channels
     loopv(channels)
     {
+        /// create a reference to the current index channel
         soundchannel &chan = channels[i];
+        /// skip this channel if it is not in use
         if(!chan.inuse) continue;
+
+        /// SDL documentation
+        /// Halt channel playback, or all channels if -1 is passed in.
+        /// Any callback set by Mix_ChannelFinished will be called. 
+        /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_34.html
         Mix_HaltChannel(i);
+
+        /// TODO: Why does stopping all channels also free them?
         freechannel(i);
     }
 }
 
+/// TODO: so there can only be ONE background music track which is nice
+
+/// the volume of sound effects and music
 void setmusicvol(int musicvol);
 VARFP(soundvol, 0, 255, 255, if(!soundvol) { stopchannels(); setmusicvol(0); });
+
+/// the volume of background music
 VARFP(musicvol, 0, 128, 255, setmusicvol(soundvol ? musicvol : 0));
 
-char *musicfile = NULL, *musicdonecmd = NULL;
+/// the path/filenam of the current music track
+char *musicfile = NULL;
 
+/// The Sauerbraten CubeScript command which should be executed 
+/// as soon as the music has stopped playing
+char *musicdonecmd = NULL;
+
+/// SDL documentation
+/// This is an opaque data type used for Music data. 
+/// This should always be used as a pointer. Who knows why it isn't a pointer in this typedef... 
+/// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_86.html
 Mix_Music *music = NULL;
+
+/// SDL documentation
+/// A structure that provides an abstract interface to stream I/O. 
+/// Applications can generally ignore the specifics of this structure's internals and treat them as opaque pointers. 
+/// The details are important to lower-level code that might need to implement one of these, however. 
+/// https://wiki.libsdl.org/SDL_RWops
 SDL_RWops *musicrw = NULL;
+
+/// A Sauerbraten stream for music (Sauerbraten's toolset)
 stream *musicstream = NULL;
 
+/// set the volume of background music
+/// @param musicvol the volume of the background music
 void setmusicvol(int musicvol)
 {
+    /// if there is no sound enabled return
     if(nosound) return;
-    if(music) Mix_VolumeMusic((musicvol*MAXVOL)/255);
+    if(music) 
+    {
+        /// SDL documentation
+        /// Changes the volume of the currently playing music. 
+        /// http://sdl.beuc.net/sdl.wiki/Mix_VolumeMusic
+        Mix_VolumeMusic((musicvol*MAXVOL)/255);
+    }
 }
 
+/// stop all music from playing
 void stopmusic()
 {
     if(nosound) return;
+    /// delete music file pointer and 
+    /// cubescript command pointer
     DELETEA(musicfile);
     DELETEA(musicdonecmd);
     if(music)
     {
+        /// SDL documentation
+        /// Halt playback of music. This interrupts music fader effects.
+        /// Any callback set by Mix_HookMusicFinished will be called when the music stops.
+        /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_67.html
         Mix_HaltMusic();
+
+        /// SDL documentation
+        /// Free the loaded music. If music is playing it will be halted.
+        /// If music is fading out, then this function will wait (blocking) until the fade out is complete. 
+        /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_56.html
         Mix_FreeMusic(music);
         music = NULL;
     }
-    if(musicrw) { SDL_FreeRW(musicrw); musicrw = NULL; }
+    if(musicrw) 
+    {
+        /// SDL documentation
+        /// Use this function to free an SDL_RWops structure allocated by SDL_AllocRW().
+        /// https://wiki.libsdl.org/SDL_FreeRW
+        SDL_FreeRW(musicrw); 
+        musicrw = NULL;
+    }
+    /// delete musicstream
     DELETEP(musicstream);
 }
 
+/// TODO: how many sound channels can your processor calculate :) ?
+
+/// the maximum amount of sound channels
 VARF(soundchans, 1, 32, 128, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
+
+/// the sound's frequency
 VARF(soundfreq, 0, 44100, 44100, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
+
+/// the sound buffer length
 VARF(soundbufferlen, 128, 1024, 4096, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
 
 void initsound()
