@@ -947,8 +947,8 @@ struct fpsent : dynent, fpsstate
     ~fpsent()
     {
         freeeditinfo(edit);
-        if(attackchan >= 0) stopsound(attacksound, attackchan);
-        if(idlechan >= 0) stopsound(idlesound, idlechan);
+        //if(attackchan >= 0) stopsound(attacksound, attackchan);
+        //if(idlechan >= 0) stopsound(idlesound, idlechan);
         if(ai) delete ai;
     }
 
@@ -963,14 +963,14 @@ struct fpsent : dynent, fpsstate
     /// @see stopsound
     void stopattacksound()
     {
-        if(attackchan >= 0) stopsound(attacksound, attackchan, 250);
+        //if(attackchan >= 0) stopsound(attacksound, attackchan, 250);
         attacksound = attackchan = -1;
     }
 
     /// @see stopsound
     void stopidlesound()
     {
-        if(idlechan >= 0) stopsound(idlesound, idlechan, 100);
+        //if(idlechan >= 0) stopsound(idlesound, idlechan, 100);
         idlesound = idlechan = -1;
     }
 
