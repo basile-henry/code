@@ -448,7 +448,7 @@ namespace game
         fpsent *h = hudplayer();
         if(h!=player1 && actor==h && d!=actor)
         {
-            if(hitsound && lasthit != lastmillis) playsound(S_HIT);
+            //if(hitsound && lasthit != lastmillis) playsound(S_HIT);
             lasthit = lastmillis;
         }
         if(d==h)
@@ -463,8 +463,8 @@ namespace game
         if(m_sp && slowmosp && d==player1 && d->health < 1) d->health = 1;
 
         if(d->health<=0) { if(local) killed(d, actor); }
-        else if(d==h) playsound(S_PAIN6);
-        else playsound(S_PAIN1+rnd(5), &d->o);
+        /*else if(d==h) playsound(S_PAIN6);
+        else playsound(S_PAIN1+rnd(5), &d->o);*/
     }
 
 	// show score at death
@@ -486,7 +486,7 @@ namespace game
             //d->pitch = 0;
             d->roll = 0;
             /// play a random death sound
-            playsound(S_DIE1+rnd(2));
+            //playsound(S_DIE1+rnd(2));
         }
         else
         {
@@ -494,7 +494,7 @@ namespace game
             d->resetinterp();
             d->smoothmillis = 0;
             /// play a random death sound
-            playsound(S_DIE1 + rnd(2), &d->o);
+            //playsound(S_DIE1 + rnd(2), &d->o);
         }
     }
 
@@ -758,9 +758,9 @@ namespace game
         if(waterlevel>0) 
         {
             /// as long as you do not enter lava play a splash sound
-            if(material!=MAT_LAVA) playsound(S_SPLASH1, d==player1 ? NULL : &d->o); 
+            //if(material!=MAT_LAVA) playsound(S_SPLASH1, d==player1 ? NULL : &d->o); 
         }
-        else if(waterlevel<0) playsound(material==MAT_LAVA ? S_BURN : S_SPLASH2, d==player1 ? NULL : &d->o);
+        //else if(waterlevel<0) playsound(material==MAT_LAVA ? S_BURN : S_SPLASH2, d==player1 ? NULL : &d->o);
         /// only send server message if I entered the water and fpsent d is not a bot
         if(floorlevel>0) { if(d==player1 || d->type!=ENT_PLAYER || ((fpsent *)d)->ai) msgsound(S_JUMP, d); }
         else if(floorlevel<0) { if(d==player1 || d->type!=ENT_PLAYER || ((fpsent *)d)->ai) msgsound(S_LAND, d); }
@@ -783,13 +783,13 @@ namespace game
         if(!d || d==player1)
         {
             addmsg(N_SOUND, "ci", d, n);
-            playsound(n);
+            //playsound(n);
         }
         else
         {
             if(d->type==ENT_PLAYER && ((fpsent *)d)->ai)
                 addmsg(N_SOUND, "ci", d, n);
-            playsound(n, &d->o);
+            //playsound(n, &d->o);
         }
     }
 
