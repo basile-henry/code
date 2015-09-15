@@ -331,8 +331,8 @@ struct captureclientmode : clientmode
     {
         static const char * const basemodels[3] = { "game/base/neutral", "game/base/red", "game/base/blue" };
         loopi(3) preloadmodel(basemodels[i]);
-        preloadsound(S_V_BASECAP);
-        preloadsound(S_V_BASELOST);
+        //preloadsound(S_V_BASECAP);
+        //preloadsound(S_V_BASELOST);
     }
 
     void rendergame()
@@ -566,7 +566,7 @@ struct captureclientmode : clientmode
                 if(!b.name[0]) conoutf(CON_GAMEINFO, "%s captured base %d", teamcolor(owner, owner), i+1);
                 else if(basenumbers) conoutf(CON_GAMEINFO, "%s captured %s (%d)", teamcolor(owner, owner), b.name, i+1);
                 else conoutf(CON_GAMEINFO, "%s captured %s", teamcolor(owner, owner), b.name);
-                if(!strcmp(owner, player1->team)) playsound(S_V_BASECAP);
+                //if(!strcmp(owner, player1->team)) playsound(S_V_BASECAP);
             }
         }
         else if(b.owner[0])
@@ -574,7 +574,7 @@ struct captureclientmode : clientmode
             if(!b.name[0]) conoutf(CON_GAMEINFO, "%s lost base %d", teamcolor(b.owner, b.owner), i+1);
             else if(basenumbers) conoutf(CON_GAMEINFO, "%s lost %s (%d)", teamcolor(b.owner, b.owner), b.name, i+1);
             else conoutf(CON_GAMEINFO, "%s lost %s", teamcolor(b.owner, b.owner), b.name);
-            if(!strcmp(b.owner, player1->team)) playsound(S_V_BASELOST);
+            //if(!strcmp(b.owner, player1->team)) playsound(S_V_BASELOST);
         }
         if(strcmp(b.owner, owner)) particle_splash(PART_SPARK, 200, 250, b.ammopos, owner[0] ? (strcmp(owner, player1->team) ? 0x802020 : 0x2020FF) : 0x208020, 0.24f);
         copystring(b.owner, owner);
@@ -582,7 +582,7 @@ struct captureclientmode : clientmode
         b.converted = converted;
         if(ammo>b.ammo)
         {
-            playsound(S_ITEMSPAWN, &b.o);
+            //playsound(S_ITEMSPAWN, &b.o);
             int icon = b.valid() ? itemstats[b.ammotype-1].icon : -1;
             if(icon >= 0) particle_icon(vec(b.ammopos.x, b.ammopos.y, b.ammopos.z + AMMOHEIGHT + 1.0f), icon%4, icon/4, PART_HUD_ICON, 2000, 0xFFFFFF, 2.0f, -8);
         }
