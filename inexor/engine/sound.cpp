@@ -152,6 +152,13 @@ vector<soundchannel> channels;
 int maxchannels = 0;
 
 /// create a new sound channel
+/// @param n the ID of the sound channel
+/// @param slot a pointer to the sound channel's sound slot
+/// @param loc the location of the sound
+/// @param ent a pointer to an entity which is linked to this sound (/newent sound)
+/// @param flags additional binary flag options
+/// @param radius the sound channel's radius
+/// @return a reference to the sound channel that has been created
 soundchannel &newchannel(int n, soundslot *slot, const vec *loc = NULL, extentity *ent = NULL, int flags = 0, int radius = 0)
 {
     /// if this is a valid entity
@@ -162,8 +169,13 @@ soundchannel &newchannel(int n, soundslot *slot, const vec *loc = NULL, extentit
         /// set the sound flag in this entity
         ent->flags |= EF_SOUND;
     }
+
+    /// Add a sound channel at the end if it does not exist already
     while(!channels.inrange(n)) channels.add(channels.length());
+    /// create a reference to the current sound channel
     soundchannel &chan = channels[n];
+
+    /// save sound channel data and configuration
     chan.reset();
     chan.inuse = true;
     if(loc) chan.loc = *loc;
