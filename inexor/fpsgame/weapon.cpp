@@ -27,7 +27,7 @@ namespace game
         if(gun!=d->gunselect)
         {
             addmsg(N_GUNSELECT, "rci", d, gun);
-            playsound(S_WEAPLOAD, &d->o);
+            //playsound(S_WEAPLOAD, &d->o);
         }
         d->gunselect = gun;
     }
@@ -43,7 +43,7 @@ namespace game
             if(force || player1->ammo[gun]) break;
         }
         if(gun != player1->gunselect) gunselect(gun, player1);
-        else playsound(S_NOAMMO);
+        //else playsound(S_NOAMMO);
     }
     ICOMMAND(nextweapon, "ii", (int *dir, int *force), nextweapon(*dir, *force!=0));
 
@@ -60,7 +60,7 @@ namespace game
         int gun = getweapon(name);
         if(player1->state!=CS_ALIVE || gun<GUN_FIST || gun>GUN_BOMB) return;
         if(force || player1->ammo[gun]) gunselect(gun, player1);
-        else playsound(S_NOAMMO);
+        //else playsound(S_NOAMMO);
     }
     ICOMMAND(setweapon, "si", (char *name, int *force), setweapon(name, *force!=0));
 
@@ -78,7 +78,7 @@ namespace game
                 return;
             }
         }
-        playsound(S_NOAMMO);
+        //playsound(S_NOAMMO);
     }
     ICOMMAND(cycleweapon, "V", (tagval *args, int numargs),
     {
@@ -115,7 +115,7 @@ namespace game
                 if(gun >= GUN_FIST && gun <= GUN_BOMB && gun != player1->gunselect && player1->ammo[gun]) { gunselect(gun, player1); return; }
             } else { weaponswitch(player1); return; }
         }
-        playsound(S_NOAMMO);
+        //playsound(S_NOAMMO);
     });
 
     void offsetray(const vec &from, const vec &to, int spread, float range, vec &dest)
@@ -382,7 +382,7 @@ namespace game
         if(at==player1 && d!=at)
         {
             extern SharedVar<int> hitsound;
-            if(hitsound && lasthit != lastmillis) playsound(S_HIT);
+            //if(hitsound && lasthit != lastmillis) playsound(S_HIT);
             lasthit = lastmillis;
         }
 
@@ -416,9 +416,9 @@ namespace game
                 {
                     damageblend(damage);
                     damagecompass(damage, at ? at->o : f->o);
-                    playsound(S_PAIN6);
+                    //playsound(S_PAIN6);
                 }
-                else playsound(S_PAIN1+rnd(5), &f->o);
+                //else playsound(S_PAIN1+rnd(5), &f->o);
             }
         }
     }
@@ -476,7 +476,7 @@ namespace game
         switch(gun) {
             case GUN_RL:
                 particle_splash(PART_SPARK, 200, 300, v, 0xB49B4B, 0.24f);
-                playsound(S_RLHIT, &v);
+                //playsound(S_RLHIT, &v);
                 particle_fireball(v, exprad, PART_EXPLOSION, -1, 0xFF8080, size);
 
                 adddynlight(v, 1.15f*exprad, vec(2, 1.5f, 1), 700, 100, 0, exprad/2, vec(1, 0.75f, 0.5f));
@@ -485,7 +485,7 @@ namespace game
 
             case GUN_GL:
                 particle_splash(PART_SPARK, 200, 300, v, 0xB49B4B, 0.24f);
-                playsound(S_FEXPLODE, &v);
+                //playsound(S_FEXPLODE, &v);
                 particle_fireball(v, exprad, PART_EXPLOSION_BLUE, int((exprad-4.0f)*15), 0x80FFFF, size);
 
                 adddynlight(v, 1.15f*exprad, vec(0.5f, 1.5f, 2), 600, 100, 0, 8, vec(0.25f, 1, 1));
@@ -493,7 +493,7 @@ namespace game
 
             case GUN_BOMB:
                 particle_splash(PART_SPARK, 200, 300, v, 0xB49B4B, 0.24f);
-                playsound(S_RLHIT, &v);
+                //playsound(S_RLHIT, &v);
                 particle_fireball(v, exprad, PART_EXPLOSION, int((exprad-4.0f)*7), 0x004D30, size);
 
                 adddynlight(v, 1.15f*exprad, vec(0.5f, 1.5f, 2), 600, 100, 0, 8, vec(0.25f, 1, 1));
@@ -538,7 +538,7 @@ namespace game
         if(guns[p.gun].part)
         {
             particle_splash(PART_SPARK, 100, 200, v, 0xB49B4B, 0.24f);
-            playsound(S_FEXPLODE, &v);
+            //playsound(S_FEXPLODE, &v);
             // no push?
         }
         else
@@ -791,13 +791,13 @@ namespace game
             case S_CHAINSAW_ATTACK:
                 if(d->attacksound >= 0) looped = true;
                 d->attacksound = sound;
-                d->attackchan = playsound(sound, d==hudplayer() ? NULL : &d->o, NULL, 0, -1, 100, d->attackchan);
+                //d->attackchan = playsound(sound, d==hudplayer() ? NULL : &d->o, NULL, 0, -1, 100, d->attackchan);
                 break;
             default:
-                playsound(sound, d==hudplayer() ? NULL : &d->o);
+                //playsound(sound, d==hudplayer() ? NULL : &d->o);
                 break;
         }
-        if(d->quadmillis && lastmillis-prevaction>200 && !looped) playsound(S_ITEMPUP, d==hudplayer() ? NULL : &d->o);
+        //if(d->quadmillis && lastmillis-prevaction>200 && !looped) playsound(S_ITEMPUP, d==hudplayer() ? NULL : &d->o);
     }
 
     void particletrack(physent *owner, vec &o, vec &d)
@@ -1098,7 +1098,7 @@ namespace game
            d->clientnum >= 0 && d->state == CS_ALIVE &&
            d->lastattackgun == gun && lastmillis - d->lastaction < guns[gun].attackdelay + 50)
         {
-            d->attackchan = playsound(d->attacksound, local ? NULL : &d->o, NULL, 0, -1, -1, d->attackchan);
+            //d->attackchan = playsound(d->attacksound, local ? NULL : &d->o, NULL, 0, -1, -1, d->attackchan);
             if(d->attackchan < 0) d->attacksound = -1;
         }
         else d->stopattacksound();
@@ -1122,13 +1122,13 @@ namespace game
             if(d->idlesound >= 0) d->stopidlesound();
             if(sound >= 0)
             {
-                d->idlechan = playsound(sound, local ? NULL : &d->o, NULL, 0, -1, 100, d->idlechan, radius);
+                //d->idlechan = playsound(sound, local ? NULL : &d->o, NULL, 0, -1, 100, d->idlechan, radius);
                 if(d->idlechan >= 0) d->idlesound = sound;
             }
         }
         else if(sound >= 0)
         {
-            d->idlechan = playsound(sound, local ? NULL : &d->o, NULL, 0, -1, -1, d->idlechan, radius);
+            //d->idlechan = playsound(sound, local ? NULL : &d->o, NULL, 0, -1, -1, d->idlechan, radius);
             if(d->idlechan < 0) d->idlesound = -1;
         }
     }
