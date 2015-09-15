@@ -462,7 +462,7 @@ struct ctfclientmode : clientmode
             preloadmodel("game/flag/blue");
         }
         static const int sounds[] = { S_FLAGPICKUP, S_FLAGDROP, S_FLAGRETURN, S_FLAGSCORE, S_FLAGRESET, S_FLAGFAIL };
-        loopi(sizeof(sounds)/sizeof(sounds[0])) preloadsound(sounds[i]);
+        //loopi(sizeof(sounds)/sizeof(sounds[0])) preloadsound(sounds[i]);
     }
 
     void drawblip(fpsent *d, float x, float y, float s, const vec &pos, bool flagblip)
@@ -763,7 +763,7 @@ struct ctfclientmode : clientmode
             f.interptime = 0;
         }
         conoutf(CON_GAMEINFO, "%s dropped %s", teamcolorname(d), teamcolorflag(f));
-        playsound(S_FLAGDROP);
+        //playsound(S_FLAGDROP);
     }
 
     void flagexplosion(int i, int team, const vec &loc)
@@ -806,7 +806,7 @@ struct ctfclientmode : clientmode
         returnflag(i);
         if(m_protect && d->feetpos().dist(f.spawnloc) < FLAGRADIUS) d->flagpickup |= 1<<f.id;
         conoutf(CON_GAMEINFO, "%s returned %s", teamcolorname(d), teamcolorflag(f));
-        playsound(S_FLAGRETURN);
+        //playsound(S_FLAGRETURN);
     }
 
     void spawnflag(flag &f)
@@ -832,7 +832,7 @@ struct ctfclientmode : clientmode
         if(shouldeffect)
         {
             conoutf(CON_GAMEINFO, "%s reset", teamcolorflag(f));
-            playsound(S_FLAGRESET);
+            //playsound(S_FLAGRESET);
         }
     }
 
@@ -863,7 +863,7 @@ struct ctfclientmode : clientmode
         }
         d->flags = dflags;
         conoutf(CON_GAMEINFO, "%s scored for %s", teamcolorname(d), teamcolor("your team", ctfflagteam(team), "the enemy team"));
-        playsound(team==ctfteamflag(player1->team) ? S_FLAGSCORE : S_FLAGFAIL);
+        //playsound(team==ctfteamflag(player1->team) ? S_FLAGSCORE : S_FLAGFAIL);
 
         if(score >= FLAGLIMIT) conoutf(CON_GAMEINFO, "%s captured %d flags", teamcolor("your team", ctfflagteam(team), "the enemy team"), score);
     }
@@ -879,7 +879,7 @@ struct ctfclientmode : clientmode
         else if(m_protect || f.droptime) conoutf(CON_GAMEINFO, "%s picked up %s", teamcolorname(d), teamcolorflag(f));
         else conoutf(CON_GAMEINFO, "%s stole %s", teamcolorname(d), teamcolorflag(f));
         ownflag(i, d, lastmillis);
-        playsound(S_FLAGPICKUP);
+        //playsound(S_FLAGPICKUP);
     }
 
     void invisflag(int i, int invis)
