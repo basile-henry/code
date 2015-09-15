@@ -432,6 +432,7 @@ void musicdone()
 }
 
 
+/// load a music file
 Mix_Music *loadmusic(const char *name)
 {
     if(!musicstream) musicstream = openzipfile(name, "rb");
@@ -440,15 +441,27 @@ Mix_Music *loadmusic(const char *name)
         if(!musicrw) musicrw = musicstream->rwops();
         if(!musicrw) DELETEP(musicstream);
     }
+    /// SDL mixer documentation??
     if(musicrw) music = Mix_LoadMUSType_RW(musicrw, MUS_NONE, 0);
+    /// SDL mixer documentation
+    /// Load music file to use. This can load WAVE, MOD, MIDI, OGG, MP3, FLAC, and any file that you use a command to play with.
+    /// If you are using an external command to play the music, you must call Mix_SetMusicCMD before this, otherwise the internal players will be used.
+    /// Alternatively, if you have set an external command up and don't want to use it, you must call Mix_SetMusicCMD(NULL) to use the built-in players again. 
+    /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_55.html
     else music = Mix_LoadMUS(findfile(name, "rb")); 
     if(!music)
     {
-        if(musicrw) { SDL_FreeRW(musicrw); musicrw = NULL; }
+        if(musicrw) 
+        {
+            /// https://wiki.libsdl.org/SDL_FreeRW
+            SDL_FreeRW(musicrw);
+            musicrw = NULL;
+        }
         DELETEP(musicstream);
     }
     return music;
 }
+
 
 void startmusic(char *name, char *cmd)
 {
