@@ -164,7 +164,7 @@ namespace game
                         if(raycubelos(o, enemy->o, target))
                         {
                             transition(M_HOME, 1, 500, 200);
-                            playsound(S_GRUNT1+rnd(2), &o);
+                            //playsound(S_GRUNT1+rnd(2), &o);
                         }
                     }
                     break;
@@ -252,7 +252,7 @@ namespace game
             {
                 state = CS_DEAD;
                 lastpain = lastmillis;
-                playsound(monstertypes[mtype].diesound, &o);
+                //playsound(monstertypes[mtype].diesound, &o);
                 monsterkilled();
                 gibeffect(max(-health, 0), vel, this);
 
@@ -262,7 +262,7 @@ namespace game
             else
             {
                 transition(M_PAIN, 0, monstertypes[mtype].pain, 200);      // in this state monster won't attack
-                playsound(monstertypes[mtype].painsound, &o);
+                //playsound(monstertypes[mtype].painsound, &o);
             }
         }
     };
@@ -284,9 +284,9 @@ namespace game
     void preloadmonsters()
     {
         loopi(NUMMONSTERTYPES) preloadmodel(monstertypes[i].mdlname);
-        for(int i = S_GRUNT1; i <= S_SLIMEBALL; i++) preloadsound(i);
-        if(m_dmsp) preloadsound(S_V_FIGHT);
-        if(m_classicsp) preloadsound(S_V_RESPAWNPOINT);
+        //for(int i = S_GRUNT1; i <= S_SLIMEBALL; i++) preloadsound(i);
+        //if(m_dmsp) preloadsound(S_V_FIGHT);
+        //if(m_classicsp) preloadsound(S_V_RESPAWNPOINT);
     }
 
     vector<monster *> monsters;
@@ -360,7 +360,7 @@ namespace game
     {
         if(m_dmsp && spawnremain && lastmillis>nextmonster)
         {
-            if(spawnremain--==monstertotal) { conoutf(CON_GAMEINFO, "\f2The invasion has begun!"); playsound(S_V_FIGHT); }
+            //if(spawnremain--==monstertotal) { conoutf(CON_GAMEINFO, "\f2The invasion has begun!"); playsound(S_V_FIGHT); }
             nextmonster = lastmillis+1000;
             spawnmonster();
         }
