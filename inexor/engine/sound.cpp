@@ -16,7 +16,8 @@ struct soundsample
     /// the name of the sound sample
     char *name;
     /// SDL documentation:
-    /// The internal format for an audio chunk. This stores the sample data, the length in bytes of that data, and the volume to use when mixing the sample. 
+    /// The internal format for an audio chunk. This stores the sample data, the length in bytes of that data, and the volume to use when mixing the sample.
+    /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_85.html
     Mix_Chunk *chunk;
 
     /// sound sample constructor
@@ -35,6 +36,7 @@ struct soundsample
             /// Free the memory used in chunk, and free chunk itself as well. 
             /// Do not use chunk after this without loading a new sample to it. 
             /// Note: It's a bad idea to free a chunk that is still being played... 
+            /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_24.html#SEC24
             Mix_FreeChunk(chunk);
             chunk = NULL;
         }
@@ -135,8 +137,10 @@ struct soundchannel
         radius = 0;
         /// TODO: why set volume to -1 instead of just 0?
         volume = -1;
+        /// TODO: why set pan to -1 instead of just 0?
         pan = -1;
         flags = 0;
+        /// TODO: why is it not "dirty" anymore??
         dirty = false;
     }
 };
@@ -150,9 +154,12 @@ int maxchannels = 0;
 /// create a new sound channel
 soundchannel &newchannel(int n, soundslot *slot, const vec *loc = NULL, extentity *ent = NULL, int flags = 0, int radius = 0)
 {
+    /// if this is a valid entity
     if(ent)
     {
+        /// apply the entity's position as the sound channel's position
         loc = &ent->o;
+        /// set the sound flag in this entity
         ent->flags |= EF_SOUND;
     }
     while(!channels.inrange(n)) channels.add(channels.length());
