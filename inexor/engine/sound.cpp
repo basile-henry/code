@@ -474,7 +474,7 @@ void startmusic(char *name, char *cmd)
     if(soundvol && musicvol && *name)
     {
         string file;
-        /// look for the music file in the media directory
+        /// append Inexor media directory
         inexor::filesystem::appendmediadir(file, MAXSTRLEN, name, DIR_MUSIC);
         path(file);
         if(loadmusic(file))
@@ -534,17 +534,23 @@ static Mix_Chunk *loadwav(const char *name)
     return c;
 }
 
+
+/// load a sound sample
 bool soundsample::load(bool msg)
 {
     if(chunk) return true;
     if(!name[0]) return false;
 
+    /// the supported file extensions
     static const char * const exts[] = { "", ".ogg", ".flac", ".wav" };
     string filename;
     loopi(sizeof(exts)/sizeof(exts[0]))
     {
+        /// append Inexor media directory
         inexor::filesystem::appendmediadir(filename, MAXSTRLEN, name, DIR_SOUND, exts[i]);
+        /// render loading screen 
         if(msg && !i) renderprogress(0, filename);
+        /// find and load wave
         path(filename);
         chunk = loadwav(filename);
         if(chunk) return true;
@@ -554,8 +560,10 @@ bool soundsample::load(bool msg)
     return false;
 }
 
+/// TODO: ?
 static hashnameset<soundsample> samples;
 
+/// TODO: clear all sound samples?
 static void cleanupsamples()
 {
     enumerate(samples, soundsample, s, s.cleanup());
@@ -985,6 +993,11 @@ void resetsound()
 }
 
 COMMAND(resetsound, "");
+
+
+
+/// In this section Mumble Positional Audio is handled.
+/// TODO: Mumble Positional Audio seems to be broken??
 
 #ifdef WIN32
 
