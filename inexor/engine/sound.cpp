@@ -433,6 +433,7 @@ void musicdone()
 
 
 /// load a music file
+/// @param name the name of the music file
 Mix_Music *loadmusic(const char *name)
 {
     if(!musicstream) musicstream = openzipfile(name, "rb");
@@ -441,7 +442,7 @@ Mix_Music *loadmusic(const char *name)
         if(!musicrw) musicrw = musicstream->rwops();
         if(!musicrw) DELETEP(musicstream);
     }
-    /// SDL mixer documentation??
+    /// TODO: SDL mixer documentation?? what is that?
     if(musicrw) music = Mix_LoadMUSType_RW(musicrw, MUS_NONE, 0);
     /// SDL mixer documentation
     /// Load music file to use. This can load WAVE, MOD, MIDI, OGG, MP3, FLAC, and any file that you use a command to play with.
@@ -463,6 +464,9 @@ Mix_Music *loadmusic(const char *name)
 }
 
 
+/// start playing music
+/// @param name the name of the music file
+/// @param the 
 void startmusic(char *name, char *cmd)
 {
     if(nosound) return;
@@ -470,6 +474,7 @@ void startmusic(char *name, char *cmd)
     if(soundvol && musicvol && *name)
     {
         string file;
+        /// look for the music file in the media directory
         inexor::filesystem::appendmediadir(file, MAXSTRLEN, name, DIR_MUSIC);
         path(file);
         if(loadmusic(file))
@@ -478,20 +483,27 @@ void startmusic(char *name, char *cmd)
             DELETEA(musicdonecmd);
             musicfile = newstring(file);
             if(cmd[0]) musicdonecmd = newstring(cmd);
+            /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_57.html
             Mix_PlayMusic(music, cmd[0] ? 0 : -1);
+            /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_61.html
             Mix_VolumeMusic((musicvol*MAXVOL)/255);
             intret(1);
         }
         else
         {
+            /// failure: return 0 to CubeScript
             conoutf(CON_ERROR, "could not play music: %s", file);
             intret(0); 
         }
     }
 }
 
+/// Command to change background music
 COMMANDN(music, startmusic, "ss");
 
+
+/// Load a wave audio file
+/// @param name the name of the WAVE file
 static Mix_Chunk *loadwav(const char *name)
 {
     Mix_Chunk *c = NULL;
@@ -501,11 +513,23 @@ static Mix_Chunk *loadwav(const char *name)
         SDL_RWops *rw = z->rwops();
         if(rw)
         {
+            /// SDL documentation
+            /// Load src for use as a sample. This can load WAVE, AIFF, RIFF, OGG, and VOC formats. 
+            /// Using SDL_RWops is not covered here, but they enable you to load from almost any source. 
+            /// Note: You must call SDL_OpenAudio before this. It must know the output characteristics so it can convert the sample for playback, it does this conversion at load time. 
+            /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_20.html
             c = Mix_LoadWAV_RW(rw, 0);
+            /// https://wiki.libsdl.org/SDL_FreeRW
             SDL_FreeRW(rw);
         }
         delete z;
     }
+    /// SDL documentation
+    /// Load file for use as a sample. This is actually Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1). 
+    /// This can load WAVE, AIFF, RIFF, OGG, and VOC files.
+    /// Note: You must call SDL_OpenAudio before this. 
+    /// It must know the output characteristics so it can convert the sample for playback, it does this conversion at load time. 
+    /// https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_19.html
     if(!c) c = Mix_LoadWAV(findfile(name, "rb"));
     return c;
 }
