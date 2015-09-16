@@ -178,10 +178,10 @@ struct aviwriter
         path(filename);
         if(!strrchr(filename, '.')) concatstring(filename, ".avi");
         
-        extern bool nosound; // sound.cpp
-        if(sound && !nosound) 
+        //extern bool nosound; // sound.cpp
+        /*if(sound && !nosound) 
         {
-            Mix_QuerySpec(&soundfrequency, &soundformat, &soundchannels);
+            //Mix_QuerySpec(&soundfrequency, &soundformat, &soundchannels);
             const char *desc;
             switch(soundformat)
             {
@@ -193,8 +193,8 @@ struct aviwriter
                 case AUDIO_S16MSB: desc = "s16b"; break;
                 default:           desc = "unkn";
             }
-            if(dbgmovie) conoutf(CON_DEBUG, "soundspec: %dhz %s x %d", soundfrequency, desc, soundchannels);
-        }
+            //if(dbgmovie) conoutf(CON_DEBUG, "soundspec: %dhz %s x %d", soundfrequency, desc, soundchannels);
+        }*/
     }
     
     ~aviwriter()
