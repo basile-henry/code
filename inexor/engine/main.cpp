@@ -34,7 +34,7 @@ void cleanup()
     extern void clear_command();
     extern void clear_console();
     extern void clear_mdls();
-    extern void clear_sound();
+    //extern void clear_sound();
 
     recorder::stop();
     cleanupserver();
@@ -57,7 +57,7 @@ void cleanup()
     clear_command();
     clear_console();
     clear_mdls();
-    clear_sound();
+    //clear_sound();
     closelogfile();
     
     /// "Use this function to clean up all initialized subsystems. You should call it upon all exit conditions."
@@ -183,9 +183,9 @@ void writeinitcfg()
     extern SharedVar<int> shaderprecision;
     f->printf("shaderprecision %d\n", *shaderprecision);
     extern SharedVar<int> soundchans, soundfreq, soundbufferlen;
-    f->printf("soundchans %d\n", *soundchans);
-    f->printf("soundfreq %d\n", *soundfreq);
-    f->printf("soundbufferlen %d\n", *soundbufferlen);
+    //f->printf("soundchans %d\n", *soundchans);
+    //f->printf("soundfreq %d\n", *soundfreq);
+    //f->printf("soundbufferlen %d\n", *soundbufferlen);
     delete f;
 }
 
@@ -248,7 +248,7 @@ void bgquad(float x, float y, float w, float h)
 void renderbackground(const char *caption, Texture *mapshot, const char *mapname, const char *mapinfo, bool restore, bool force)
 {
     if(!inbetweenframes && !force) return;
-    stopsounds(); // stop sounds while loading
+    //stopsounds(); // stop sounds while loading
 
     int w = screenw, h = screenh;
     if(forceaspect) w = int(ceil(h*forceaspect));
@@ -1336,7 +1336,7 @@ int main(int argc, char **argv)
     emptymap(0, true, NULL, false);
 
     logoutf("init: sound");
-    initsound();
+    //initsound();
 
     logoutf("init: cfg");
     execfile("config/keymap.cfg");
@@ -1384,7 +1384,7 @@ int main(int argc, char **argv)
 
     logoutf("init: mainloop");
 
-    initmumble();
+    //initmumble();
     resetfpshistory();
 
     inputgrab(grabinput = true);
@@ -1430,7 +1430,7 @@ int main(int argc, char **argv)
         // miscellaneous general game effects
         recomputecamera();
         updateparticles();
-        updatesounds();
+        //updatesounds();
 
         if(minimized) continue;
 
