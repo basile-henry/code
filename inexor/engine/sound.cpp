@@ -6,6 +6,8 @@
 #include "SDL_mixer.h"
 #define MAXVOL MIX_MAX_VOLUME
 
+
+/*
 /// determins if sound is on or off (/soundvol 0?)
 bool nosound = true;
 
@@ -569,25 +571,40 @@ static void cleanupsamples()
     enumerate(samples, soundsample, s, s.cleanup());
 }
 
+/// the central sound system
+/// including music and sound effects
 static struct soundtype
 {
+    /// TODO: do we have different configurations which contain different sounds?
     vector<soundslot> slots;
     vector<soundconfig> configs;
 
+    /// find a sound by name or volume
+    /// @param name the sound's name
+    /// @param vol the sound's volume
+    /// @return the index of the sound or -1 if no sound has been found
     int findsound(const char *name, int vol)
     {
+        /// loop through all sound configurations
         loopv(configs)
         {
             soundconfig &s = configs[i];
+            /// loop through all sound slots
             loopj(s.numslots)
             {
                 soundslot &c = slots[s.slots+j];
+                /// return the sound index
                 if(!strcmp(c.sample->name, name) && (!vol || c.volume==vol)) return i;
             }
         }
         return -1;
     }
 
+
+    /// add a sound slot
+    /// @param name
+    /// @param vol
+    /// @return 
     int addslot(const char *name, int vol)
     {
         soundsample *s = samples.access(name);
@@ -613,6 +630,12 @@ static struct soundtype
         return oldlen;
     }
 
+
+    /// TODO: add a sound ?
+    /// @param name the name of the sound
+    /// @param vol the volume of the sound
+    /// TODO: @param maxuses the maximum mount of times this sound should be used (?)
+    /// @return
     int addsound(const char *name, int vol, int maxuses = 0)
     {
         soundconfig &s = configs.add();
@@ -622,6 +645,9 @@ static struct soundtype
         return configs.length()-1;
     }
 
+    /// TODO: add an alternative sound (?)
+    /// @param name the name of the alternative sound
+    /// @param vol the volume of the alternative sound
     void addalt(const char *name, int vol)
     {
         if(configs.empty()) return;
@@ -656,17 +682,26 @@ static struct soundtype
         loopk(config.numslots) slots[config.slots+k].sample->load(true);
     }
 
+    /// is this sound playing?
     bool playing(const soundchannel &chan, const soundconfig &config) const
     {
         return chan.inuse && config.hasslot(chan.slot, slots);
     }
-} gamesounds, mapsounds;
+};
+
+/// an instance for game sound effects
+soundtype gamesounds;
+/// an instance for map sound effects
+soundtype mapsounds;
+
 
 void registersound(char *name, int *vol) { intret(gamesounds.addsound(name, *vol, 0)); }
 COMMAND(registersound, "si");
 
 void mapsound(char *name, int *vol, int *maxuses) { intret(mapsounds.addsound(name, *vol, *maxuses < 0 ? 0 : max(1, *maxuses))); }
 COMMAND(mapsound, "sii");
+
+/// TODO: What does alt stand for? alternative?
 
 void altsound(char *name, int *vol) { gamesounds.addalt(name, *vol); }
 COMMAND(altsound, "si");
@@ -685,6 +720,9 @@ void mapsoundreset()
     mapsounds.reset();
 }
 COMMAND(mapsoundreset, "");
+
+
+
 
 void resetchannels()
 {
@@ -1042,6 +1080,8 @@ VARFP(mumble, 0, 1, 1, { if(mumble) initmumble(); else closemumble(); });
 VARFP(mumble, 0, 0, 1, { if(mumble) initmumble(); else closemumble(); });
 #endif
 
+
+/// TODO: ?
 void initmumble()
 {
     if(!mumble) return;
@@ -1070,6 +1110,7 @@ void initmumble()
 #endif
 }
 
+/// TODO: ?
 void closemumble()
 {
 #ifdef WIN32
@@ -1081,6 +1122,7 @@ void closemumble()
 #endif
 }
 
+/// TODO: ?
 static inline vec mumblevec(const vec &v, bool pos = false)
 {
     // change from X left, Z up, Y forward to X right, Y up, Z forward
@@ -1090,6 +1132,7 @@ static inline vec mumblevec(const vec &v, bool pos = false)
     return m;
 }
 
+/// TODO: ?
 void updatemumble()
 {
 #ifdef VALID_MUMBLELINK
@@ -1106,3 +1149,4 @@ void updatemumble()
 #endif
 }
 
+*/
