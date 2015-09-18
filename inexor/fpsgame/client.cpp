@@ -179,15 +179,18 @@ namespace game
     /// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     /// team, name and playermodel settings
 
-    /// change my own nick name
+    /// change own nick name
     /// @param name my new nickname
     /// @see filtertext
-    void switchname(const char *name)
+    void switchname(const char *name, const char *tag)
     {
-        /// your nickname will be filtered by clients again
-        filtertext(player1->name, name, false, false, MAXNAMELEN);
-        if(!player1->name[0]) copystring(player1->name, "unnamed");
-        addmsg(N_SWITCHNAME, "rs", player1->name);
+        if(name[0])
+        {
+            filtertext(player1->name, name, false, false, MAXNAMELEN);
+            if(!player1->name[0]) copystring(player1->name, "unnamed");
+        }
+        if(tag) filtertext(player1->tag, tag, false, false, MAXTAGLEN);
+        addmsg(N_SWITCHNAME, "rss", player1->name, player1->tag);
     }
 
 	/// print my own nick name to the game console
@@ -197,13 +200,21 @@ namespace game
     }
     ICOMMAND(name, "sN", (char *s, int *numargs),
     {
-        if(*numargs > 0) switchname(s);
+        if(*numargs > 0) switchname(s, NULL);
         else if(!*numargs) printname();
         else result(colorname(player1));
     });
     ICOMMAND(getname, "", (), result(player1->name));
 
-	/// switch my own team
+    ICOMMAND(tag, "sN", (char *s, int *numargs),
+    {
+        if(*numargs > 0) switchname("", s);
+        else if(!*numargs) conoutf("your tag is: %s", player1->tag);
+        else result(player1->tag);
+    });
+    ICOMMAND(gettag, "", (), result(player1->tag));
+
+    /// switch own team
     /// @see filtertext
     void switchteam(const char *team)
     {
@@ -211,7 +222,7 @@ namespace game
         else addmsg(N_SWITCHTEAM, "rs", team);
     }
 
-    /// print my own team name to the game console
+    /// print own team name to the game console
     void printteam()
     {
         conoutf("your team is: %s", player1->team);
@@ -1612,8 +1623,9 @@ namespace game
                 fpsent *d = newclient(cn);
                 if(!d)
                 {
-                    getstring(text, p);
-                    getstring(text, p);
+                    getstring(text, p);//name 
+                    getstring(text, p); //team
+                    getstring(text, p); //tag
                     getint(p);
                     break;
                 }
@@ -1631,14 +1643,19 @@ namespace game
                     if(needclipboard >= 0) needclipboard++;
                 }
                 copystring(d->name, text, MAXNAMELEN+1);
+
                 getstring(text, p);
                 filtertext(d->team, text, false, false, MAXTEAMLEN);
+
+                getstring(text, p);
+                filtertext(d->tag, text, false, false, MAXTAGLEN);
+
                 d->playermodel = getint(p);
                 break;
             }
 
             case N_SWITCHNAME:
-                getstring(text, p);
+                getstring(text, p); //name
                 if(d)
                 {
                     filtertext(text, text, false, false, MAXNAMELEN);
@@ -1649,6 +1666,8 @@ namespace game
                         copystring(d->name, text, MAXNAMELEN+1);
                     }
                 }
+                getstring(text, p); //tag
+                if(d) filtertext(d->tag, text, false, false, MAXTAGLEN);
                 break;
 
             case N_SWITCHMODEL:
@@ -2190,14 +2209,17 @@ namespace game
             case N_INITAI:
             {
                 int bn = getint(p), on = getint(p), at = getint(p), sk = clamp(getint(p), 1, 101), pm = getint(p);
-                string name, team;
+                string name, team, tag;
                 getstring(text, p);
                 filtertext(name, text, false, false, MAXNAMELEN);
                 getstring(text, p);
                 filtertext(team, text, false, false, MAXTEAMLEN);
+                getstring(text, p);
+                filtertext(tag, text, false, false, MAXTAGLEN);
+
                 fpsent *b = newclient(bn);
                 if(!b) break;
-                ai::init(b, at, on, sk, bn, pm, name, team);
+                ai::init(b, at, on, sk, bn, pm, name, team, tag);
                 break;
             }
 
@@ -2211,7 +2233,7 @@ namespace game
         }
     }
 
-	// accept file download from server
+    // accept file download from server
     void receivefile(packetbuf &p)
     {
         int type;
