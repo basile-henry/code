@@ -3697,18 +3697,18 @@ namespace server
                 pausegame(val > 0, ci);
                 break;
             }
-            case N_PERSISTTEAMS:
-            {
-                int val = getint(p);
-                if(ci->privilege < (restrictpersistteams ? PRIV_ADMIN : PRIV_MASTER) && !ci->local) break;
-                persistteams(val > 0);
-                break;
-            }
             case N_GAMESPEED:
             {
                 int val = getint(p);
                 if(ci->privilege < (restrictgamespeed ? PRIV_ADMIN : PRIV_MASTER) && !ci->local) break;
                 changegamespeed(val, ci);
+                break;
+            }
+            case N_PERSISTTEAMS:
+            {
+                int val = getint(p);
+                if(ci->privilege < (restrictpersistteams ? PRIV_ADMIN : PRIV_MASTER) && !ci->local) break;
+                persistteams(val > 0);
                 break;
             }
 

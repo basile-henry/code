@@ -1538,16 +1538,6 @@ namespace game
                 else conoutf("game is %s", val ? "paused" : "resumed");
                 break;
             }
-			case N_PERSISTTEAMS:
-			{
-				bool val = getint(p) > 0;
-				if(!demopacket) 
-				{
-					teamspersisted = true;
-				}
-				conoutf("teams will be %s next game", val ? "persistent" : "reshuffled");
-				break;
-			}
             case N_GAMESPEED:
             {
                 int val = clamp(getint(p), 10, 1000), cn = getint(p);
@@ -1559,7 +1549,17 @@ namespace game
                 else conoutf("gamespeed is %d", val);
                 break;
             }
-                
+            case N_PERSISTTEAMS:
+            {
+                bool val = getint(p) > 0;
+                if(!demopacket)
+                {
+                    teamspersisted = true;
+                }
+                conoutf("teams will be %s next game", val ? "persistent" : "reshuffled");
+                break;
+            }
+
             case N_CLIENT:
             {
                 int cn = getint(p), len = getuint(p);
