@@ -2,6 +2,7 @@
 // runs dedicated or as client coroutine
 
 #include "inexor/engine/engine.h"
+#include "inexor/crashreporter/CrashReporter.h"
 
 #define LOGSTRLEN 512
 
@@ -1155,8 +1156,9 @@ vector<const char *> gameargs;
 
 #ifdef STANDALONE
 int main(int argc, char **argv)
-{   
+{
     setlogfile(NULL);
+    inexor::crashreporter::CrashReporter SingletonStackwalker; // We only need to initialse it, not use it.
     if(enet_initialize()<0) fatal("Unable to initialise network module");
     atexit(enet_deinitialize);
     enet_time_set(0);
