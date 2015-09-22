@@ -1210,7 +1210,7 @@ COMMAND(killprogram, "i");
 int main(int argc, char **argv)
 {
     setlogfile(NULL);
-    inexor::crashreporter::CrashReporter SingletonStackwalker; // We only need to initialse it, not use it.
+    UNUSED inexor::crashreporter::CrashReporter SingletonStackwalker; // We only need to initialse it, not use it.
 
     int dedicated = 0;
     char *load = NULL, *initscript = NULL;
