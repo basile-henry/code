@@ -247,9 +247,8 @@ if(OS_WINDOWS)
         # /OPT:REF                              = Eliminate Unreferenced Data (to revert changes to the binary caused by /DEBUG)
         # /OPT:ICF                              = Remove Redundant COMDATs (to revert changes to the binary caused by /DEBUG)
         # /INCREMENTAL:NO                       = Linking incremental (faster) does not work anymore with the previous two optimizations
-        # /PDBALTPATH:%_PDB%                    = Do not store the absolute path to our pdb-file (debug information storage) in our binary
         # /LTCG                                 = Link-time Code Generation: further optimisations in the linker stage.
-        set(I_LINKER_FLAGS_RELEASE    "-OPT:REF -OPT:ICF -INCREMENTAL:NO -PDBALTPATH:%_PDB% -LTCG")
+        set(I_LINKER_FLAGS_RELEASE    "-OPT:REF -OPT:ICF -INCREMENTAL:NO -LTCG")
     endif()
 
     # Standard definitions
