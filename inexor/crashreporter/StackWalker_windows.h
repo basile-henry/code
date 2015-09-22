@@ -134,7 +134,7 @@ protected:
 
 static inline void printStackTrace(char *output, int outputlen)
 {
-    StackWalker sw(output, outputlen, 3);
+    StackWalker sw(output, outputlen);
     sw.ShowCallstack();
 }
 
