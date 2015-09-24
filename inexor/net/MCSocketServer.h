@@ -49,7 +49,7 @@ namespace net {
 
       if (er == boost::asio::error::basic_errors::try_again)
         return NULL;
-      else if (er == asio::error::basic_errors::would_block) //caused by calling in mainloop
+      else if (er == boost::asio::error::basic_errors::would_block) //caused by calling in mainloop
         return NULL;
       else if (er)
         throw boost::system::system_error(er, "Can not accept connection");
