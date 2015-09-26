@@ -71,7 +71,7 @@ void fatal(const char *fmt, ...)
 { 
     void cleanupserver();
     cleanupserver(); 
-	defvnformatstring(msg,500,fmt,fmt);
+	defvnformatstring(msg,800,fmt,fmt);
 	if(logfile) logoutf("%s", msg);
 #ifdef WIN32
 	MessageBox(NULL, msg, "Inexor fatal error", MB_OK|MB_SYSTEMMODAL);

@@ -36,6 +36,9 @@ static inline void demanglesymbol(char *output, int outputlen, char *symbol)
         size_t funcnamesize = 1024;
         char funcname[1024];
 
+        char *shortsymbol = strrchr(symbol, '/'); //not useful info
+        if(shortsymbol) symbol = (shortsymbol + 1);
+
         char* ret = abi::__cxa_demangle(begin_name, &funcname[0], &funcnamesize, &status);
         if(status == 0)
         {
@@ -85,8 +88,10 @@ static inline void demanglesymbol(char *output, int outputlen, char *symbol)
         char* fname = begin_name;
         if(status == 0) fname = ret;
 
-        if(begin_offset) snprintf(output, outputlen, "  %-30s ( %-40s  + %-6s) %s\n", symbol, fname, begin_offset, end_offset);
-        else             snprintf(output, outputlen, "  %-30s ( %-40s    %-6s) %s\n", symbol, fname, "", end_offset);
+        char *shortsymbol = strrchr(symbol, '/');
+        if(shortsymbol) symbol = (shortsymbol + 1);
+        if(begin_offset) snprintf(output, outputlen, "  %-30s ( %-40s  + %-6s)\n", symbol, fname, begin_offset);
+        else             snprintf(output, outputlen, "  %-30s ( %-40s    %-6s)\n", symbol, fname, "");
     }
     else {
         // couldn't parse the line? print the whole line.
