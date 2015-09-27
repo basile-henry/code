@@ -7,6 +7,7 @@
 #include <execinfo.h>
 #include <stdlib.h>
 #include <cxxabi.h>
+#include <string.h>
 
 namespace inexor {
 namespace crashreporter {
