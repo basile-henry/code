@@ -1,3 +1,6 @@
 [submodule "inexor/libraries/muparser"]
 	path = inexor/libraries/muparser
 	url = https://github.com/inexor-game/muparser.git
+[submodule "inexor/libraries/enet"]
+	path = inexor/libraries/enet
+	url = https://github.com/lsalzman/enet.git
