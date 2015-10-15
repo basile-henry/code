@@ -451,8 +451,6 @@ namespace game
     }
     ICOMMAND(isspectator, "i", (int *cn), intret(isspectator(*cn) ? 1 : 0));
 
-    /// please note:  A.I. = "artificial intelligence"
-
 	/// check if this cn is a bot (computer controlled player)
     bool isai(int cn, int type) 
     {
@@ -956,6 +954,12 @@ namespace game
         printvar(player1, id); /// print my own change as well
     }
 
+    void broadcastfov(int fov)
+    {
+        player1->fov = fov;
+        addmsg(N_FOV, "rci", player1, fov);
+    }
+
 	/// pause game 
     void pausegame(bool val)
     {
@@ -1295,6 +1299,7 @@ namespace game
         putint(p, N_CONNECT);
         sendstring(player1->name, p);
         putint(p, player1->playermodel);
+        putint(p, player1->fov); //TODO mix this in other msg..
         string hash = "";
         if(connectpass[0])
         {
@@ -1669,7 +1674,8 @@ namespace game
                     getstring(text, p);//name 
                     getstring(text, p); //team
                     getstring(text, p); //tag
-                    getint(p);
+                    getint(p);          //playermodel
+                    getint(p);          //fov
                     break;
                 }
                 getstring(text, p);
@@ -1694,6 +1700,7 @@ namespace game
                 filtertext(d->tag, text, false, false, MAXTAGLEN);
 
                 d->playermodel = getint(p);
+                d->fov = getint(p);
                 break;
             }
 
@@ -1865,6 +1872,13 @@ namespace game
             {
                 if(!d) return;
                 d->lasttaunt = lastmillis;
+                break;
+            }
+
+            case N_FOV:
+            {
+                if(!d) return;
+                d->fov = getint(p);
                 break;
             }
 
